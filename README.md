@@ -8,3 +8,8 @@ encoder/decoder.
 - https://github.com/hiwonjoon/tf-vqvae
 
 The goal in this repo is to have WaveNet as the encoder/decoder. 
+
+### Credits
+The starting code for this was adapted from 
+- hiwonjoon's repo using VQ-VAE with the pixel-cnn architecture https://github.com/hiwonjoon/tf-vqvae
+- ibab's repo loading audio files and the implementation of the WaveNet architecture https://github.com/ibab/tensorflow-wavenet
