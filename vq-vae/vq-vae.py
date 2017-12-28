@@ -8,27 +8,17 @@ import os
 import time
 import json
 from utils import mu_law
+from audio_reader import AudioReader
 
-from wavenet.audio_reader import AudioReader
-from wavenet.model import WaveNetModel
+def calculate_receptive_field(filter_width, dilations, scalar_input,
+                                  initial_filter_width):
+    receptive_field = (filter_width - 1) * sum(dilations) + 1
+    if scalar_input:
+        receptive_field += initial_filter_width - 1
+    else:
+        receptive_field += filter_width - 1
+    return receptive_field
 
-def _audio_arch(d):
-    with tf.variable_scope('enc') as enc_param_scope:
-        enc_spec = [
-            Conv1d('conv1d_1', 1, d, k_w=4, d_w=2),
-            lambda t,**kwargs : tf.nn.relu(t),
-            Conv1d('conv1d_2', d, d, k_w=4, d_w=2),
-            lambda t,**kwargs : tf.nn.relu(t),
-            Conv1d('conv1d_3', d, d, k_w=4, d_w=2),
-            lambda t,**kwargs : tf.nn.relu(t),
-            Conv1d('conv1d_4', d, d, k_w=4, d_w=2),
-            lambda t,**kwargs : tf.nn.relu(t),
-            Conv1d('conv1d_5', d, d, k_w=4, d_w=2),
-            lambda t,**kwargs : tf.nn.relu(t),
-            Conv1d('conv1d_6', d, d, k_w=4, d_w=2),
-        ]
-
-    return enc_spec, enc_param_scope, None, None
 
 class VQVAE():
     def __preprocess_forward_pass(self, x):
@@ -299,7 +289,7 @@ if __name__ == "__main__":
             coord,
             sample_rate=wavenet_params['sample_rate'],
             gc_enabled=gc_enabled,
-            receptive_field=WaveNetModel.calculate_receptive_field(wavenet_params["filter_width"],
+            receptive_field = calculate_receptive_field(wavenet_params["filter_width"],
                                                                    wavenet_params["dilations"],
                                                                    wavenet_params["scalar_input"],
                                                                    wavenet_params["initial_filter_width"]),

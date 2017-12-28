@@ -1,3 +1,8 @@
+"""
+Taken from:
+https://github.com/ibab/tensorflow-wavenet
+"""
+
 import fnmatch
 import os
 import random
